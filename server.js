@@ -4,8 +4,6 @@ console.log('server file is connected, but not neccessarily up on its PORT');
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-
-
 //use
 const app = express();
 //middle wear
@@ -17,6 +15,24 @@ app.get('/', (request, response) => {
 });
 
 
+//database connect 
+const Cat = require('./models/cat');
+
+
+
+//routes
+app.get('/cats', getCats);
+
+
+function getCats(req, res, next){
+  try {
+    console.log('we made it to the get Cats');
+    let dataBaseResults = Cat.find();
+    res.status(200).send(dataBaseResults);
+  } catch (error) {
+    next(error);
+  }
+}
 
 
 
