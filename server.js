@@ -19,7 +19,7 @@ const mongoose = require('mongoose');
 const Cat = require('./models/cat');
 
 //1. Now make sure we can connect to our show password on mongo online Database access and show in browse collections where db name will show up
-mongoose.set('strictQuery', true);
+// mongoose.set('strictQuery', true);
 //2. Now make sure we can connect to our connect Mongoose to ouur MongoDB
 mongoose.connect(process.env.DB_URL);
 
@@ -39,6 +39,7 @@ function getCats(req, res, next){
   try {
     console.log('we made it to the get Cats');
     let dataBaseResults = Cat.find();
+    console.log('DATA?',dataBaseResults);
     res.status(200).send(dataBaseResults);
   } catch (error) {
     next(error);
