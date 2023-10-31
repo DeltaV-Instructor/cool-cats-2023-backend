@@ -5,14 +5,12 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 //use
+//implement express .get(), .use(), .post(), delete()
 const app = express();
 //middle wear
 app.use(cors());
 const PORT = process.env.PORT || 5555;
 
-app.get('/', (request, response) => {
-  response.status(200).send('Hello from the Server!');
-});
 
 const mongoose = require('mongoose');
 //database connect
@@ -32,14 +30,76 @@ db.once('open', function () {
 });
 
 //routes
+
+app.get('/', (req, res) => res.status(200).send('Hello from the Server!'));
 app.get('/cats', getCats);
+//POST to create a new Cat
+app.post('/cats', postCats);
+//DELETE
+app.delete('/cats/:id', deleteCats);
 
 
-function getCats(req, res, next){
+
+
+// this needs to go in the 'body' of our request object....
+//{
+//   "name": "BOB",
+//   "color":"Blue",
+//   "spayNeuter": true,
+//   "location": "the streets"
+// }
+
+
+
+async function postCats(req,res,next){
+  console.log(req,'from our post cat is firing');
+  // create a new database entry with the object from our front end
+  // we do this by passing our data in the KEY: 'body' of our request object
+  console.log('data object in the url', req.body);
   try {
-    console.log('we made it to the get Cats');
-    let dataBaseResults = Cat.find();
-    console.log('DATA?',dataBaseResults);
+    let createCat = await Cat.create(req.body);
+    console.log('after the database',createCat);
+    res.status(200).send(createCat);
+  } catch (error) {
+    next(error);
+  }
+}
+
+
+
+
+
+async function deleteCats(req,res,next){
+  try {
+    console.log(req.params.id);
+    let id = req.params.id;
+    await Cat.findByIdAndDelete(id);
+    res.status(200).send('Cat was Deleted');
+  } catch (error) {
+    next(error);
+  }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+async function getCats(req, res, next){
+  try {
+    // console.log('we made it to the get Cats');
+    let dataBaseResults = await Cat.find();
+    // console.log('DATA?',dataBaseResults);
     res.status(200).send(dataBaseResults);
   } catch (error) {
     next(error);
