@@ -12,7 +12,7 @@ async function clear(){
     await Cat.deleteMany({});
     console.log('cats cleared from MONGO-DATA-BASE');
   } catch (error) {
-    console.error(error)
+    console.error(error);
   } finally {
     mongoose.disconnect();
   }

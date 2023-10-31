@@ -6,9 +6,11 @@ const express = require('express');
 const cors = require('cors');
 //use
 //implement express .get(), .use(), .post(), delete()
+
 const app = express();
 //middle wear
 app.use(cors());
+app.use(express.json());
 const PORT = process.env.PORT || 5555;
 
 
