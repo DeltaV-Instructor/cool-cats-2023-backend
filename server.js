@@ -5,7 +5,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 //use
-//implement express .get(), .use(), .post(), delete()
+
+//implement express .get(), .use(), .post(), .delete()
 
 const app = express();
 //middle wear
@@ -35,10 +36,48 @@ db.once('open', function () {
 
 app.get('/', (req, res) => res.status(200).send('Hello from the Server!'));
 app.get('/cats', getCats);
-//POST to create a new Cat
 app.post('/cats', postCats);
-//DELETE
 app.delete('/cats/:id', deleteCats);
+//add the put
+app.put('/cats/:id', putCats);
+
+
+
+
+
+
+async function putCats(request, response, next){
+  try {
+    //we need to pull out the id from       params.
+    //then we need the data which is in the body.
+    //id and body live on the REQUEST object and we are just using them to pass data from the front to our server
+    let id = request.params.id;
+    let dataToUpdate = request.body;
+    // console.log('JJJJJJJJJJ',id, dataToUpdate);
+    //now that we have our thing to update lets contact mongo using mongoose...
+    // findByIdAndUpdate()
+    // takes in 3 arguments
+    // 1.is the id
+    // 2.is the data to update
+    //3. we need to give it some options object over write the whole data object not just part of the object / record in the db. so we get a new version and replace the old one.
+    //this is a put not a patch(more efficient)
+    let updatedCat = await Cat.findByIdAndUpdate(id,dataToUpdate,{new:true,overwrite:true});
+    // console.log('back from the db update: ',updatedCat);
+    response.status(200).send(updatedCat);
+  } catch (error) {
+    next(error);
+  }
+}
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -52,7 +91,16 @@ app.delete('/cats/:id', deleteCats);
 // }
 
 
-
+async function getCats(req, res, next){
+  try {
+    // console.log('we made it to the get Cats');
+    let dataBaseResults = await Cat.find();
+    // console.log('DATA?',dataBaseResults);
+    res.status(200).send(dataBaseResults);
+  } catch (error) {
+    next(error);
+  }
+}
 async function postCats(req,res,next){
   console.log(req,'from our post cat is firing');
   // create a new database entry with the object from our front end
@@ -66,11 +114,6 @@ async function postCats(req,res,next){
     next(error);
   }
 }
-
-
-
-
-
 async function deleteCats(req,res,next){
   try {
     console.log(req.params.id);
@@ -97,16 +140,6 @@ async function deleteCats(req,res,next){
 
 
 
-async function getCats(req, res, next){
-  try {
-    // console.log('we made it to the get Cats');
-    let dataBaseResults = await Cat.find();
-    // console.log('DATA?',dataBaseResults);
-    res.status(200).send(dataBaseResults);
-  } catch (error) {
-    next(error);
-  }
-}
 
 
 
