@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 5555;
 const mongoose = require('mongoose');
 //database connect
 const Cat = require('./models/cat');
-
+const verifyUser = require('./auth.js');
 //1. Now make sure we can connect to our show password on mongo online Database access and show in browse collections where db name will show up
 // mongoose.set('strictQuery', true);
 //2. Now make sure we can connect to our connect Mongoose to ouur MongoDB
@@ -89,18 +89,55 @@ async function putCats(request, response, next){
 //   "spayNeuter": true,
 //   "location": "the streets"
 // }
+// async function getCats(req, res, next){
+//   try {
+//      console.log('we made it to the get Cats');
+//     let dataBaseResults = await Cat.find();
+//     console.log('DATA?',dataBaseResults);
+//     res.status(200).send(dataBaseResults);
+//   } catch (error) {
+//     next(error);
+//   }
+// }
+// to use verification functionality, paste your exsisting code inside of this function
+/**
+verifyUser(req, async (err, user) => {
+  if(err){
+    console.log(err);
+    res.send('invalid token');
+  } else {
+    //paste your code here.
+  }
+});
+*/
 
 
 async function getCats(req, res, next){
-  try {
-    // console.log('we made it to the get Cats');
-    let dataBaseResults = await Cat.find();
-    // console.log('DATA?',dataBaseResults);
-    res.status(200).send(dataBaseResults);
-  } catch (error) {
-    next(error);
-  }
+  // eslint-disable-next-line no-unused-vars
+  verifyUser(req, async (err, user) => {
+    if(err){
+      console.log(err);
+      res.send('invalid token');
+    } else {
+    //paste your code here.
+      try {
+        // console.log('we made it to the get Cats');
+        let dataBaseResults = await Cat.find();
+        // console.log('DATA?',dataBaseResults);
+        res.status(200).send(dataBaseResults);
+      } catch (error) {
+        next(error);
+      }
+    }
+  });
 }
+
+
+
+
+
+
+
 async function postCats(req,res,next){
   console.log(req,'from our post cat is firing');
   // create a new database entry with the object from our front end
